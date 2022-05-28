@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit</title>
+    <style>
+        #button{
+            margin-top: 10px;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="text" id="input">
+        <input type="checkbox" id="status">
+      </div>
+    <div>
+        <button id="add" onclick="addData()">ADD</button>
+    </div>
+    <div id="container">
+        <!-- <button id="new">New</button>
+        <button id="bread">Buy Bread</button>
+        <button id="milk">Buy Milk</button> -->
+    </div>
+</body>
+<script>
+    async function addData(){
+        try {
+            let title=document.getElementById('input').value;
+            let body={
+                title
+            };
+            let res=await fetch(`http://localhost:3000/tasks`,{
+                method:"POST",
+                body: JSON.stringify(body),
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            });
+            let data=await res.json()
+            console.log(data)
+            updateDOM();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async function updateDOM(){
+        try { 
+            let container=document.getElementById('container')
+            let res=await fetch(`http://localhost:3000/tasks`);
+            let data=await res.json();
+
+            data.forEach((item)=>{
+                let div=document.createElement('div')
+                div.setAttribute('id','buttons')
+                let button=document.createElement('button');
+                button.setAttribute('id','button')
+                button.innerText=item.title;
+                button.onclick=async function (){
+                    localStorage.setItem('titleId',item.id);
+                    location.href='edit.html'
+                }
+                div.append(button)
+                container.append(div)
+            })
+            console.log(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    updateDOM()
+
+
+</script>
+</html>
